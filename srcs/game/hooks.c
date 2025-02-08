@@ -74,16 +74,13 @@ int	is_wall(t_data *cube, double posx, double posy)
 
 int	close_window(t_data *cube)
 {
-	int	index;
-
-	index = 0;
 	mlx_destroy_image(cube->window.mlx_ptr, cube->ntexture.img_ptr);
 	mlx_destroy_image(cube->window.mlx_ptr, cube->stexture.img_ptr);
 	mlx_destroy_image(cube->window.mlx_ptr, cube->etexture.img_ptr);
 	mlx_destroy_image(cube->window.mlx_ptr, cube->wtexture.img_ptr);
 	mlx_destroy_image(cube->window.mlx_ptr, cube->window.img_ptr);
 	mlx_destroy_window(cube->window.mlx_ptr, cube->window.mlx_win);
-	mlx_destroy_display(cube->window.mlx_ptr);
+	// mlx_destroy_display(cube->window.mlx_ptr);
 	free_map(cube);
 	free_parse(cube->p, NULL, 1);
 	free(cube->keys);

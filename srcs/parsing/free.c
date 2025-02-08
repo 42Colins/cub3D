@@ -95,7 +95,7 @@ void	free_on_error(t_data *cube)
 	index = 0;
 	mlx_destroy_window(cube->window.mlx_ptr, cube->window.mlx_win);
 	mlx_destroy_image(cube->window.mlx_ptr, cube->window.img_ptr);
-	mlx_destroy_display(cube->window.mlx_ptr);
+	// mlx_destroy_display(cube->window.mlx_ptr);
 	while (index < cube->height && cube->map[index])
 		free(cube->map[index++]);
 	free(cube->map);

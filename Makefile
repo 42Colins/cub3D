@@ -11,17 +11,14 @@
 # **************************************************************************** #
 
 ifeq ($(shell uname -s), Linux)
-	MLXLIB		=	minilibx/libmlx.a
-	MLXFLAGS	=	-lmlx_Linux -L/usr/lib -Iminilibx -lXext -lX11 -lz
-	MLXINC		=	-I/usr/include -Iminilibx
-	MLXDIR		=	minilibx/
+	MLXDIR	=	./minilibx/
+	MLX		=	$(MLXDIR)libmlx.a
+	MLXFLAGS	=	-Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 endif
 ifeq ($(shell uname -s), Darwin)
 	MLXDIR	=	./mlx/
-	MLXFLAGS =	-lmlx -framework OpenGL -framework AppKit
-	MLXINC		=	-Imlx
-	# MLXFLAGS	=	-lmlx -L/usr/lib -Iminilibx -lXext -lX11 -lz
-	MLXLIB		=	minilibx/libmlx_Darwin.a
+	MLX		=	$(MLXDIR)libmlx.a
+	MLXFLAGS	=	-lmlx -framework OpenGL -framework AppKit
 endif
 
 NAME = cub3D
@@ -67,34 +64,61 @@ SRCS =	$(DIR_SRCS)main.c			\
 		$(DIR_GAME)move.c			\
 		$(DIR_GAME)texture.c		\
 
-OBJS =	$(patsubst %.c, $(DIR_OBJ)%.o, $(SRCS))
+# OBJS =	$(patsubst %.c, $(DIR_OBJ)%.o, $(SRCS))
 
-all	:		makelib $(NAME)
+# all	:		makelib $(NAME)
 
-$(DIR_OBJ)%.o: %.c $(LIB) $(HEADERS)
-				@mkdir -p $(shell dirname $@)
-				$(CC) $(CFLAGS) -c $< -o $@ -I $(DIR_INCLUDES) -Iminilibx -Ilibft
+# # $(DIR_OBJ)%.o: %.c $(LIB) $(HEADERS)
+# # 				@mkdir -p $(shell dirname $@)
+# # 				$(CC) $(CFLAGS) -c $< -o $@ -I $(DIR_INCLUDES) -Iminilibx -Ilibft
 
-$(NAME): $(LIB) $(MLXLIB) $(OBJS)
-	make -C $(MLXDIR)
-	$(CC) $(OBJS) -L$(MLXDIR) -lm $(MLXFLAGS) $(libftFLAGS) -o $(NAME)
+# # $(NAME): $(LIB) $(MLXLIB) $(OBJS)
+# # 	make -C $(MLXDIR)
+# # 	$(CC) $(OBJS) -L$(MLXDIR) -lm $(MLXFLAGS) $(libftFLAGS) -o $(NAME)
 
-makelib:
-			$(MAKE) -C libft
-			$(MAKE) all -C $(MLXDIR)
+# # makelib:
+# # 			$(MAKE) -C libft
+# # 			$(MAKE) all -C $(MLXDIR)
 
-clean :
-			$(MAKE) clean -C libft
-			$(MAKE) clean -C $(MLXDIR)
-			$(RM) $(OBJS)
+# # clean :
+# # 			$(MAKE) clean -C libft
+# # 			$(MAKE) clean -C $(MLXDIR)
+# # 			$(RM) $(OBJS)
 
-fclean :	clean
-			$(MAKE) fclean -C libft
-			@$(RM) $(DIR_OBJ)
-			$(RM) $(NAME)
+# # fclean :	clean
+# # 			$(MAKE) fclean -C libft
+# # 			@$(RM) $(DIR_OBJ)
+# # 			$(RM) $(NAME)
 
-re :		fclean all
+# # re :		fclean all
 
-.PHONY : libft all clean re fclean
+# # .PHONY : libft all clean re fclean
 
-# .SILENT :	$(OBJS) $(MLXc) $(NAME) libft
+LIB = libft/libft.a
+
+OBJS = $(SRCS:.c=.o)
+
+all:	$(LIB) $(MLX) $(NAME)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -I/usr/include -Imlx_linux -O3 -I./libft -c $< -o $@
+
+$(NAME): $(OBJS) $(LIB) $(MLX)
+	$(CC) $(OBJS) -L./libft -lft -L$(MLXDIR) $(MLXFLAGS) -o $(NAME)
+
+$(LIB):
+	$(MAKE) -C libft
+
+$(MLX):
+	$(MAKE) -C $(MLXDIR)
+
+clean:
+	$(MAKE) clean -C libft
+	$(MAKE) clean -C $(MLXDIR)
+	$(RM) $(OBJS)
+
+fclean:	clean
+	$(MAKE) fclean -C libft
+	$(RM) $(NAME)
+
+re:	fclean all
